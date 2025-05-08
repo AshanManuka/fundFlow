@@ -23,8 +23,4 @@ public class User {
     @Column(nullable = false)
     private String role;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Customer customer;
-
 }

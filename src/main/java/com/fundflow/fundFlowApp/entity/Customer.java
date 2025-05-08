@@ -3,6 +3,8 @@ package com.fundflow.fundFlowApp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Date;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,6 +31,12 @@ public class Customer {
     @Column(nullable = false)
     private double creditScore;
 
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+    private Date createdDate;
+
+    private Date updateDate;
+
+
+    @OneToOne
+    @JoinColumn(name = "id")
     private User user;
 }
