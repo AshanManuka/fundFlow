@@ -1,6 +1,6 @@
 package com.fundflow.fundFlowApp.controller;
 
-import com.fundflow.fundFlowApp.auth.AuthReqDto;
+import com.fundflow.fundFlowApp.dto.auth.AuthReqDto;
 import com.fundflow.fundFlowApp.service.MyUserDetailsService;
 import com.fundflow.fundFlowApp.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;

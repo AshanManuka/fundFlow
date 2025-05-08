@@ -1,4 +1,4 @@
-package com.fundflow.fundFlowApp.auth;
+package com.fundflow.fundFlowApp.dto.auth;
 
 import lombok.Getter;
 import lombok.Setter;
