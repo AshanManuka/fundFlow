@@ -19,4 +19,13 @@ public interface LoanRepository extends JpaRepository<Loan,Long> {
     @Query("SELECT new com.fundflow.fundFlowApp.dto.loan.LoanDetailResDto(l.id, c.name, c.email, c.nic, c.income, c.creditScore, l.status, l.loanAmount, l.installment, l.reason, l.requestedDate) FROM Loan l JOIN l.customer c")
     List<LoanDetailResDto> getAllLoans();
 
+    @Query("SELECT new com.fundflow.fundFlowApp.dto.loan.LoanDetailResDto(l.id, c.name, c.email, c.nic, c.income, c.creditScore, l.status, l.loanAmount, l.installment, l.reason, l.requestedDate) FROM Loan l JOIN l.customer c WHERE l.status = ?1 AND (c.creditScore > ?2 AND c.creditScore < ?3)")
+    List<LoanDetailResDto> filterLoanByStatusAndScore(String loanStatus, double minScore, double maxScore);
+
+    @Query("SELECT new com.fundflow.fundFlowApp.dto.loan.LoanDetailResDto(l.id, c.name, c.email, c.nic, c.income, c.creditScore, l.status, l.loanAmount, l.installment, l.reason, l.requestedDate) FROM Loan l JOIN l.customer c WHERE c.creditScore > ?1 AND c.creditScore < ?2")
+    List<LoanDetailResDto> filterLoanByScore(double minScore, double maxScore);
+
+    @Query("SELECT new com.fundflow.fundFlowApp.dto.loan.LoanDetailResDto(l.id, c.name, c.email, c.nic, c.income, c.creditScore, l.status, l.loanAmount, l.installment, l.reason, l.requestedDate) FROM Loan l JOIN l.customer c WHERE c.id = ?1")
+    List<LoanDetailResDto> getAllLoansByCustomerId(Long customerId);
+
 }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -95,9 +96,43 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public ResponseEntity<?> getAllLoans() {
         List<LoanDetailResDto> loanList = loanRepository.getAllLoans();
-
-
+        log.info("Get all loans for admin");
         return ResponseEntity.ok(new CommonResponse<>(true,loanList));
+    }
+
+    @Override
+    public ResponseEntity<?> filterLoans(String loanStatus, double minScore, double maxScore) {
+
+        if(minScore == 0){
+            minScore = 300;
+        }
+        if(maxScore == 0){
+            maxScore = 850;
+        }
+
+        if(!loanStatus.isEmpty()){
+            List<LoanDetailResDto> loanList = loanRepository.filterLoanByStatusAndScore(loanStatus, minScore, maxScore);
+            log.info("filter and return loans by status:{}, minScore:{}, maxScore{}",loanStatus, minScore, maxScore);
+            return ResponseEntity.ok(new CommonResponse<>(true, loanList));
+        }else{
+            List<LoanDetailResDto> loanList = loanRepository.filterLoanByScore(minScore, maxScore);
+            log.info("filter and return loans by  minScore:{}, maxScore{}",minScore, maxScore);
+            return ResponseEntity.ok(new CommonResponse<>(true, loanList));
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<?> getLoansbyCustomer(long customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if(customer.isPresent()){
+            List<LoanDetailResDto> loanList = loanRepository.getAllLoansByCustomerId(customerId);
+            log.info("get and return loans by cusId:{}",customerId);
+            return ResponseEntity.ok(new CommonResponse<>(true, loanList));
+        }else{
+            log.error("No Customer found customerId:{}",customerId);
+            return ResponseEntity.ok(new CommonResponse<>(true, "No Customer found"));
+        }
     }
 
 

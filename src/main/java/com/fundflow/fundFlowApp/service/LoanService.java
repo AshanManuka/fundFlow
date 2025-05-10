@@ -11,4 +11,8 @@ public interface LoanService {
     ResponseEntity<?> getAllLoanByCustomer(String userName);
 
     ResponseEntity<?> getAllLoans();
+
+    ResponseEntity<?> filterLoans(String loanStatus, double minScore, double maxScore);
+
+    ResponseEntity<?> getLoansbyCustomer(long customerId);
 }
