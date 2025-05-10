@@ -23,8 +23,20 @@ public class CustomerAccountController {
 
     @GetMapping("/all-customer")
     public ResponseEntity<?> getAllCustomer(){
-        log.info("Get all customers");
+        log.info("Request for get all customers");
         return customerService.getAllCustomer();
+    }
+
+    @GetMapping("/search-customer")
+    public ResponseEntity<?> searchCustomer(@RequestParam String cusKeyword){
+        log.info("Request for search customer by keyword: {}",cusKeyword);
+        return customerService.searchCustomer(cusKeyword);
+    }
+
+    @PutMapping("/update-customer")
+    public ResponseEntity<?> updateCustomer(@RequestParam Long cusId, @RequestBody CustomerRegisterReqDto reqDto){
+        log.info("Request for update customer, cusId: {}",cusId);
+        return customerService.updateCustomer(cusId,reqDto);
     }
 
 

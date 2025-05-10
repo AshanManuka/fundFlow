@@ -10,6 +10,7 @@ import com.fundflow.fundFlowApp.repository.UserRepository;
 import com.fundflow.fundFlowApp.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +28,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
     @Override
     public ResponseEntity<?> registerCustomer(CustomerRegisterReqDto reqBody) {
@@ -76,13 +79,55 @@ public class CustomerServiceImpl implements CustomerService {
             return ResponseEntity.internalServerError().body(new CommonResponse<>(false, "Something went wrong"));
         }
 
-
-
     }
 
     @Override
     public ResponseEntity<?> getAllCustomer() {
         List<BasicCustomerResDto> customerList = customerRepository.getAllCustomer();
+        log.info("loaded and return customer list");
         return ResponseEntity.ok(new CommonResponse<>(true,customerList));
     }
+
+    @Override
+    public ResponseEntity<?> searchCustomer(String cusKeyword) {
+        List<BasicCustomerResDto> customerList = customerRepository.searchCustomerByKeyword(cusKeyword);
+        log.info("loaded and return customer list by keyword :{}",cusKeyword);
+        return ResponseEntity.ok(new CommonResponse<>(true,customerList));
+    }
+
+    @Override
+    public ResponseEntity<?> updateCustomer(Long cusId, CustomerRegisterReqDto reqDto) {
+        Optional<Customer> customer = customerRepository.findById(cusId);
+        if (customer.isEmpty()) {
+            log.error("No customer found, customerId: {}",cusId);
+            return ResponseEntity.ok(new CommonResponse<>(false,"No Customer Found"));
+        }else{
+
+            Customer existsCustomer = customer.get();
+            User existsUser = existsCustomer.getUser();
+
+            if(existsCustomer.getEmail().equals(reqDto.getEmail())){
+                Customer checkCustomer = customerRepository.findByEmail(reqDto.getEmail());
+                if(checkCustomer != null){
+                    log.error("New email already exists, {}",reqDto.getEmail());
+                    return ResponseEntity.ok(new CommonResponse<>(false,"New Email Already Exists..!"));
+                }
+            }
+
+            existsUser.setUsername(reqDto.getEmail());
+            existsUser.setPassword(passwordEncoder.encode(reqDto.getEmail()));
+            existsUser = userRepository.save(existsUser);
+
+            modelMapper.map(reqDto,existsCustomer);
+            existsCustomer.setUpdateDate(new Date());
+            existsCustomer.setUser(existsUser);
+            customerRepository.save(existsCustomer);
+
+            log.info("customer obj : {}",customer);
+            return ResponseEntity.ok(new CommonResponse<>(true, "Customer Details Updated Successfully..!"));
+        }
+
+    }
+
+
 }

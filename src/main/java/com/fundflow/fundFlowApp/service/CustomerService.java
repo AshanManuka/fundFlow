@@ -7,4 +7,8 @@ public interface CustomerService {
     ResponseEntity<?> registerCustomer(CustomerRegisterReqDto reqBody);
 
     ResponseEntity<?> getAllCustomer();
+
+    ResponseEntity<?> searchCustomer(String cusKeyword);
+
+    ResponseEntity<?> updateCustomer(Long cusId, CustomerRegisterReqDto reqDto);
 }
