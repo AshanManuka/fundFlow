@@ -3,7 +3,9 @@ package com.fundflow.fundFlowApp.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Builder
 @AllArgsConstructor
@@ -35,8 +37,11 @@ public class Customer {
 
     private Date updateDate;
 
-
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Loan> loans = new ArrayList<>();
+
 }

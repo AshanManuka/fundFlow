@@ -8,6 +8,7 @@ import com.fundflow.fundFlowApp.entity.User;
 import com.fundflow.fundFlowApp.repository.CustomerRepository;
 import com.fundflow.fundFlowApp.repository.UserRepository;
 import com.fundflow.fundFlowApp.service.CustomerService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;

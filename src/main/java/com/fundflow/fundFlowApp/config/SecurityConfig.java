@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/authenticate", "/public/**").permitAll() // Public endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN") // Admin endpoints
-                        .requestMatchers("/user/**").hasRole("USER") // User endpoints
+                        .requestMatchers("/customer/**").hasRole("CUSTOMER") // User endpoints
                         .anyRequest().authenticated() // All other endpoints require authentication
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Stateless session management
