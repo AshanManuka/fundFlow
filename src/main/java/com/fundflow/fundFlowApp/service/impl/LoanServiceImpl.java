@@ -1,6 +1,7 @@
 package com.fundflow.fundFlowApp.service.impl;
 
 import com.fundflow.fundFlowApp.dto.common.CommonResponse;
+import com.fundflow.fundFlowApp.dto.loan.LoanDetailResDto;
 import com.fundflow.fundFlowApp.dto.loan.LoanReqDto;
 import com.fundflow.fundFlowApp.dto.loan.LoanResDto;
 import com.fundflow.fundFlowApp.entity.Customer;
@@ -62,9 +63,11 @@ public class LoanServiceImpl implements LoanService {
         if(totalScore >= 70){
             status = "ELIGIBLE";
             resMessage = "Your requested amount is Eligible for a loan..!";
+            log.info("eligible loan request of customer:{}",customer.getEmail());
         }else{
             status = "NOT ELIGIBLE";
             resMessage = "Your requested amount is not Eligible for a loan..!";
+            log.info("not eligible loan request of customer:{}",customer.getEmail());
         }
 
         Loan loan = Loan.builder()
@@ -77,6 +80,7 @@ public class LoanServiceImpl implements LoanService {
                 .customer(customer)
                 .build();
         loanRepository.save(loan);
+        log.info("lon request saved");
 
         return ResponseEntity.ok(new CommonResponse<>(true, resMessage));
     }
@@ -84,7 +88,16 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public ResponseEntity<?> getAllLoanByCustomer(String userName) {
         List<LoanResDto> loanList = loanRepository.getAllLoanByEmail(userName);
+        log.info("get and return loan history by customer email: {}",userName);
         return ResponseEntity.ok(new CommonResponse<>(true, loanList));
+    }
+
+    @Override
+    public ResponseEntity<?> getAllLoans() {
+        List<LoanDetailResDto> loanList = loanRepository.getAllLoans();
+
+
+        return ResponseEntity.ok(new CommonResponse<>(true,loanList));
     }
 
 

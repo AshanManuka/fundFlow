@@ -9,4 +9,6 @@ public interface LoanService {
     ResponseEntity<?> saveLoanRequest(String userName, LoanReqDto reqDto);
 
     ResponseEntity<?> getAllLoanByCustomer(String userName);
+
+    ResponseEntity<?> getAllLoans();
 }
