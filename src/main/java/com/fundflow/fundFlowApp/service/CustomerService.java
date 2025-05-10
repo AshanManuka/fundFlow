@@ -5,4 +5,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface CustomerService {
     ResponseEntity<?> registerCustomer(CustomerRegisterReqDto reqBody);
+
+    ResponseEntity<?> getAllCustomer();
 }

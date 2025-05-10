@@ -5,10 +5,7 @@ import com.fundflow.fundFlowApp.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Log4j2
@@ -21,8 +18,13 @@ public class CustomerAccountController {
     @PostMapping("/register-customer")
     public ResponseEntity<?> registerCustomer(@RequestBody CustomerRegisterReqDto reqBody){
         log.info("Request for customer Registration, customer-nic: {}",reqBody.getNic());
-        customerService.registerCustomer(reqBody);
-        return null;
+        return customerService.registerCustomer(reqBody);
+    }
+
+    @GetMapping("/all-customer")
+    public ResponseEntity<?> getAllCustomer(){
+        log.info("Get all customers");
+        return customerService.getAllCustomer();
     }
 
 

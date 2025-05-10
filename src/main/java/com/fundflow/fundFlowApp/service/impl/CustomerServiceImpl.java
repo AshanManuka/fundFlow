@@ -1,6 +1,7 @@
 package com.fundflow.fundFlowApp.service.impl;
 
 import com.fundflow.fundFlowApp.dto.common.CommonResponse;
+import com.fundflow.fundFlowApp.dto.customer.BasicCustomerResDto;
 import com.fundflow.fundFlowApp.dto.customer.CustomerRegisterReqDto;
 import com.fundflow.fundFlowApp.entity.Customer;
 import com.fundflow.fundFlowApp.entity.User;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +78,11 @@ public class CustomerServiceImpl implements CustomerService {
 
 
 
+    }
+
+    @Override
+    public ResponseEntity<?> getAllCustomer() {
+        List<BasicCustomerResDto> customerList = customerRepository.getAllCustomer();
+        return ResponseEntity.ok(new CommonResponse<>(true,customerList));
     }
 }
