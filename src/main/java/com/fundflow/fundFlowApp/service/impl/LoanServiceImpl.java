@@ -2,6 +2,7 @@ package com.fundflow.fundFlowApp.service.impl;
 
 import com.fundflow.fundFlowApp.dto.common.CommonResponse;
 import com.fundflow.fundFlowApp.dto.loan.LoanReqDto;
+import com.fundflow.fundFlowApp.dto.loan.LoanResDto;
 import com.fundflow.fundFlowApp.entity.Customer;
 import com.fundflow.fundFlowApp.entity.Loan;
 import com.fundflow.fundFlowApp.repository.CustomerRepository;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @Log4j2
@@ -77,6 +79,12 @@ public class LoanServiceImpl implements LoanService {
         loanRepository.save(loan);
 
         return ResponseEntity.ok(new CommonResponse<>(true, resMessage));
+    }
+
+    @Override
+    public ResponseEntity<?> getAllLoanByCustomer(String userName) {
+        List<LoanResDto> loanList = loanRepository.getAllLoanByEmail(userName);
+        return ResponseEntity.ok(new CommonResponse<>(true, loanList));
     }
 
 

@@ -31,6 +31,14 @@ public class ManageProfileController {
     }
 
 
+    @GetMapping("/loan-history")
+    public ResponseEntity<?> getLoanHistory(@RequestHeader("Authorization") String headerToken){
+        String userName = getUserNameByToken(headerToken);
+        log.info("Request for get all loans by customer, customer :{}",userName);
+        return loanService.getAllLoanByCustomer(userName);
+    }
+
+
     private String getUserNameByToken(String tokenHeader){
         if (tokenHeader != null && tokenHeader.startsWith("Bearer ")) {
             String token = tokenHeader.substring(7);

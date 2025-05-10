@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 public interface LoanService {
 
     ResponseEntity<?> saveLoanRequest(String userName, LoanReqDto reqDto);
+
+    ResponseEntity<?> getAllLoanByCustomer(String userName);
 }
