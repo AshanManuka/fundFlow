@@ -39,5 +39,11 @@ public class CustomerAccountController {
         return customerService.updateCustomer(cusId,reqDto);
     }
 
+    @DeleteMapping("/delete-customer")
+    public ResponseEntity<?> deleteCustomer(@RequestParam long customerId){
+        log.info("delete customer id:{}",customerId);
+        return customerService.deleteCustomer(customerId);
+    }
+
 
 }

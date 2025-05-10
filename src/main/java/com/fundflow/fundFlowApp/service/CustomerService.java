@@ -11,4 +11,6 @@ public interface CustomerService {
     ResponseEntity<?> searchCustomer(String cusKeyword);
 
     ResponseEntity<?> updateCustomer(Long cusId, CustomerRegisterReqDto reqDto);
+
+    ResponseEntity<?> deleteCustomer(long customerId);
 }

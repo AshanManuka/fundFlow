@@ -14,5 +14,7 @@ public interface LoanService {
 
     ResponseEntity<?> filterLoans(String loanStatus, double minScore, double maxScore);
 
-    ResponseEntity<?> getLoansbyCustomer(long customerId);
+    ResponseEntity<?> getLoansbyCustomer(long loanId);
+
+    ResponseEntity<?> UpdateLoanStatus(long loanId, String status);
 }

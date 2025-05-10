@@ -123,16 +123,39 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public ResponseEntity<?> getLoansbyCustomer(long customerId) {
-        Optional<Customer> customer = customerRepository.findById(customerId);
-        if(customer.isPresent()){
+    public ResponseEntity<?> getLoansbyCustomer(long loanId) {
+        Optional<Loan> loan = loanRepository.findById(loanId);
+        if(loan.isPresent()){
+            Loan existLoan = loan.get();
+            long customerId = existLoan.getCustomer().getId();
             List<LoanDetailResDto> loanList = loanRepository.getAllLoansByCustomerId(customerId);
             log.info("get and return loans by cusId:{}",customerId);
             return ResponseEntity.ok(new CommonResponse<>(true, loanList));
         }else{
-            log.error("No Customer found customerId:{}",customerId);
+            log.error("No loan found loanId:{}",loanId);
             return ResponseEntity.ok(new CommonResponse<>(true, "No Customer found"));
         }
+    }
+
+    @Override
+    public ResponseEntity<?> UpdateLoanStatus(long loanId, String status) {
+
+        Optional<Loan> loan = loanRepository.findById(loanId);
+
+        if(loan.isPresent()){
+            Loan existLoan = loan.get();
+            existLoan.setStatus(status);
+            existLoan.setUpdatedDate(new Date());
+
+            loanRepository.save(existLoan);
+            log.info("updated loan status");
+            return ResponseEntity.ok(new CommonResponse<>(true, "Loan Updated Successfully..!"));
+
+        }else{
+            log.error("no loan found loanId:{}",loanId);
+            return ResponseEntity.ok(new CommonResponse<>(false, "No loan found"));
+        }
+
     }
 
 

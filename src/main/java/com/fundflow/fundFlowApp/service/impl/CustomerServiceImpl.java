@@ -108,7 +108,7 @@ public class CustomerServiceImpl implements CustomerService {
             Customer existsCustomer = customer.get();
             User existsUser = existsCustomer.getUser();
 
-            if(existsCustomer.getEmail().equals(reqDto.getEmail())){
+            if(!existsCustomer.getEmail().equals(reqDto.getEmail())){
                 Customer checkCustomer = customerRepository.findByEmail(reqDto.getEmail());
                 if(checkCustomer != null){
                     log.error("New email already exists, {}",reqDto.getEmail());
@@ -129,6 +129,20 @@ public class CustomerServiceImpl implements CustomerService {
             return ResponseEntity.ok(new CommonResponse<>(true, "Customer Details Updated Successfully..!"));
         }
 
+    }
+
+    @Override
+    public ResponseEntity<?> deleteCustomer(long customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if(customer.isPresent()){
+            Customer existsCustomer = customer.get();
+            customerRepository.delete(existsCustomer);
+            log.info("customer Deleted : {}",customerId);
+            return ResponseEntity.ok(new CommonResponse<>(true, "Customer Deleted Successfully..!"));
+        }else{
+            log.error("customer not found by Id : {}",customerId);
+            return ResponseEntity.ok(new CommonResponse<>(false, "Customer Not Found"));
+        }
     }
 
 

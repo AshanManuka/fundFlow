@@ -4,10 +4,7 @@ import com.fundflow.fundFlowApp.service.LoanService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Log4j2
@@ -30,8 +27,14 @@ public class ManageLoanController {
     }
 
     @GetMapping("/single-customer-loan")
-    public ResponseEntity<?> getLoansByCustomer(@RequestParam long customerId){
-        log.info("Request for get al loans by customer:{}",customerId);
-        return loanService.getLoansbyCustomer(customerId);
+    public ResponseEntity<?> getLoansByCustomer(@RequestParam long loanId){
+        log.info("Request for get al loans by customer:{}",loanId);
+        return loanService.getLoansbyCustomer(loanId);
+    }
+
+    @PutMapping("/update-status")
+    public ResponseEntity<?> updateLoanStatus(@RequestParam long loanId, @RequestParam String status){
+        log.info("Request for update loan Status:{} of loanId:{}",status, loanId);
+        return loanService.UpdateLoanStatus(loanId, status);
     }
 }
