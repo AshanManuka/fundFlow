@@ -4,22 +4,33 @@ import com.fundflow.fundFlowApp.dto.common.CommonResponse;
 import com.fundflow.fundFlowApp.dto.customer.BasicCustomerResDto;
 import com.fundflow.fundFlowApp.dto.customer.CustomerRegisterReqDto;
 import com.fundflow.fundFlowApp.entity.Customer;
+import com.fundflow.fundFlowApp.entity.Uploads;
 import com.fundflow.fundFlowApp.entity.User;
 import com.fundflow.fundFlowApp.repository.CustomerRepository;
+import com.fundflow.fundFlowApp.repository.UploadsRepository;
 import com.fundflow.fundFlowApp.repository.UserRepository;
 import com.fundflow.fundFlowApp.service.CustomerService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
+    private final UploadsRepository uploadsRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
@@ -143,6 +155,84 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("customer not found by Id : {}",customerId);
             return ResponseEntity.ok(new CommonResponse<>(false, "Customer Not Found"));
         }
+    }
+
+    @Override
+    public String saveDocuments(MultipartFile uploadedFile, String uploadedName) {
+        log.info("catch document from service");
+
+        if(uploadedFile.isEmpty()){
+            return "the uploaded file is empty";
+        }
+
+        String originalFileName = Paths.get(uploadedFile.getOriginalFilename()).getFileName().toString();
+        String uploadPath = System.getProperty("user.dir")+ File.separator+"uploads";
+
+
+        File uploadDir = new File(uploadPath);
+        if(!uploadDir.exists()){
+            uploadDir.mkdirs();
+        }
+
+        File lastDest = new File(uploadDir +File.separator+ UUID.randomUUID()+"_"+originalFileName);
+        try {
+            uploadedFile.transferTo(lastDest);
+
+            Uploads nwUpload = Uploads.builder()
+                    .location("uploads/" + lastDest.getName())
+                    .build();
+
+            Uploads savedUpload = uploadsRepository.save(nwUpload);
+
+            if(savedUpload == null){
+                return "Something went wrong";
+            }else{
+                return "Ducument uploaded succesfully.!";
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public ResponseEntity<Resource> getImageById(Long imgId) {
+
+        Optional<Uploads> uploadOpt = uploadsRepository.findById(imgId);
+        if (uploadOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Uploads upload = uploadOpt.get();
+        String filePath = upload.getLocation();
+
+        try{
+
+            File file = new File(System.getProperty("user.dir") +File.separator+ filePath);
+
+            if(!file.exists()){
+                return ResponseEntity.notFound().build();
+            }
+
+            Resource resource = new UrlResource(file.toURI());
+
+            String contentType = Files.probeContentType(file.toPath());
+
+            if(contentType == null){
+                contentType = "application/octet-stream"; // default fallback
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
 
